@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:@127.0.0.1:8889/cidadealta_emblems"
+}
+
+model User {
+  id Int @default(autoincrement()) @id
+  name String
+  email String  @unique
+  password String
+  image String?
+  role String?
+  active Boolean @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+  last_login DateTime?
+  user_emblems UserEmblems[]
+}
+
+model Category {
+  id Int @default(autoincrement()) @id
+  name String
+  slug String @unique
+  color String
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+  emblems Emblem[]
+}
+
+model Emblem {
+  id Int @default(autoincrement()) @id
+  name String
+  slug String @unique
+  image String?
+  category Category? @relation(fields: [category_id], references: [id])
+  category_id Int?
+  created_at DateTime @default(now())
+  updated_at DateTime? @updatedAt
+  user_emblems UserEmblems[]
+}
+
+model UserEmblems {
+  id Int @default(autoincrement()) @id
+  user User @relation(fields: [user_id], references: [id])
+  user_id Int
+  emblem Emblem @relation(fields: [emblem_id], references: [id])
+  emblem_id Int
+  date_awarded DateTime
+}
